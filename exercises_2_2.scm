@@ -249,10 +249,10 @@
 ;;  Exercise 2.30
 ;;  -------------
 
-(define (square-tree tree)
-  (cond ((null? tree)       '())
-	((not (pair? tree)) (square tree))
-	(else               (cons (square-tree (car tree)) (square-tree (cdr tree)))) ))
+;; (define (square-tree tree)
+;;   (cond ((null? tree)       '())
+;; 	((not (pair? tree)) (square tree))
+;; 	(else               (cons (square-tree (car tree)) (square-tree (cdr tree)))) ))
 
 
 (define (square-tree-map tree)
@@ -260,3 +260,65 @@
 	 (cond ((pair? x) (square-tree-map x))
 	       (else      (square x)) ))
        tree))
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.31
+;;  -------------
+
+(define (tree-map f tree)
+  (map (lambda (x)
+	 (cond ((pair? x) (square-tree-map x))
+	       (else      (f x)) ))
+       tree))
+
+(define (square-tree tree) (tree-map square tree))
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.32
+;;  -------------
+
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (x) (cons (car s) x)) rest)))))
+
+
+;;------------------------------------------------------------------------
+
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op initial (cdr sequence)))))
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.33
+;;  -------------
+
+(define (my-map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) nil sequence))
+
+(define (my-append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (my-length sequence)
+  (accumulate (lambda (x n) (+ n 1))  0 sequence))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
