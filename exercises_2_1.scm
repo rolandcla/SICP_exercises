@@ -182,7 +182,9 @@
 
 (define (make-interval a b) (cons a b))
 
-;;--------------------------------------------------------------------------
+;;-----------------------------------------------------------------
+;;  Exercise 2.7
+;;  ------------
 
 (define (lower-bound interval)
   (car interval) )
@@ -190,11 +192,98 @@
 (define (upper-bound interval)
   (cdr interval) )
 
+;;-----------------------------------------------------------------
+;;  Exercise 2.8
+;;  ------------
+
 (define (sub-interval x y)
   (make-interval (- (lower-bound x) (upper-bound y))
 		 (- (upper-bound x) (lower-bound y)) ))
 
 
+;;-----------------------------------------------------------------
+;;  Exercise 2.9
+;;  ------------
+
+(define (width x)
+  (/ (- (upper-bound x) (lower-bound x)) 2) )
+
+
+
+
+;;-----------------------------------------------------------------
+;;  Exercise 2.10
+;;  -------------
+
+(define (div-interval x y)
+  (let ( (ub (upper-bound y))
+	 (lb (lower-bound y)) )
+    (cond ((or (= ub 0) (= lb 0)) (error "Division by zero !!!"))
+	  (else (mul-interval x (make-interval (/ 1.0 ub) (/ 1.0 lb)))
+		))))
+
+
+;;-----------------------------------------------------------------
+;;  Exercise 2.10
+;;  -------------
+
+
+(define (mul-interval x y)
+  (let ( (xl (lower-bound x))
+	 (xu (upper-bound x))
+	 (yl (lower-bound y))
+	 (yu (upper-bound y)))
+    (cond ((> xl 0) (cond ((> yl 0) (make-interval (* xl yl) (* xu yu)) )
+			  ((> yu 0) (make-interval (* xu yl) (* xu yu)) )
+			  (else     (make-interval (* xu yl) (* xl yu)) ) ))
+	  
+	  ((> xu 0) (cond ((> yl 0) (make-interval (* xl yu) (* xu yu)) )
+			  ((> yu 0) (make-interval (min (* xl yu) (* xu yl))
+						   (max (* xl yl) (* xu yu))))
+			  (else     (make-interval (* xu yl) (* xl yl)) ) ))
+	  
+	  (else     (cond ((> yl 0) (make-interval (* xl yu) (* xu yl)) )
+			  ((> yu 0) (make-interval (* xl yu) (* xl yl)) )
+			  (else     (make-interval (* xu yu) (* xl yl)) ) ))
+	  )))
+
+
+;;-----------------------------------------------------------------
+
+(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+
+;;-----------------------------------------------------------------
+;;  Exercise 2.12
+;;  -------------
+
+(define (make-center-percent center percent)
+  (make-center-width center (/ (* center percent) 100)) )
+
+(define (percent interval)
+  (* (/ (width interval) (center interval)) 100) )
+
+
+;;-----------------------------------------------------------------
+
+(define (par1 r1 r2)
+  (div-interval (mul-interval r1 r2)
+                (add-interval r1 r2)))
+
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1)))
+    (div-interval one
+                  (add-interval (div-interval one r1)
+                                (div-interval one r2)))))
+
+;;-----------------------------------------------------------------
 
 
 
