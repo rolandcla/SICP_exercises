@@ -305,14 +305,54 @@
 (define (my-length sequence)
   (accumulate (lambda (x n) (+ n 1))  0 sequence))
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.34
+;;  -------------
 
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms) (+ (* higher-terms x) this-coeff))
+              0
+              coefficient-sequence))
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.35
+;;  -------------
 
+(define (count-leaves t)
+  (accumulate +
+	      0
+	      (map (lambda (x) (if (pair? x) (count-leaves x) 1))
+		   t)))
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.36
+;;  -------------
 
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
 
+;;------------------------------------------------------------------------
 
+(define (dot-product v w)
+  'sorry-map-is-not-implemented-yet
+  (accumulate + 0 (map * v w)))
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.37
+;;  -------------
+
+(define (matrix-*-vector m v)
+  (map (lambda (w) (dot-product v w)) m))
+
+(define (transpose mat)
+  (accumulate-n cons '() mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (v) (matrix-*-vector cols v)) m)))
 
 
 
