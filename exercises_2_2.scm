@@ -356,9 +356,133 @@
 
 
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.38
+;;  -------------
+
+;; 3/2
+;; 1/6
+;; (1(2(3 ())))
+;; (((() 1) 2) 3)
+
+;; op doit etre commutative pour que fold-right et fold-left donnent le mm valeur.
+;; (= (op x y) (op y x)) --> #t
 
 
+;;------------------------------------------------------------------------
+;;  Exercise 2.39
+;;  -------------
+
+(define (reverse1 sequence)
+  (fold-right (lambda (x y) (append y (list x))) nil sequence))
+
+(define (reverse2 sequence)
+  (fold-left (lambda (x y) (cons y x)) nil sequence))
 
 
+;;------------------------------------------------------------------------
 
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low (enumerate-interval (+ low 1) high))))
+
+(define (flatmap proc seq)
+  (fold-right append nil (map proc seq)))
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.40
+;;  -------------
+
+(define (unique-pairs n)
+  (flatmap (lambda (i)
+	     (map (lambda (j) (list i j))
+		  (enumerate-interval 1 (- i 1)) ))
+	   (enumerate-interval 1 n) ))
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+	       (unique-pairs n) )))
+;;------------------------------------------------------------------------
+;;  Exercise 2.41
+;;  -------------
+
+(define (unique-triples n)
+  (flatmap (lambda (i)
+	     (flatmap (lambda (j)
+		    (map (lambda (k) (list i j k))
+			 (enumerate-interval 1 (- j 1)) ))
+		  (enumerate-interval 1 (- i 1)) ))
+	   (enumerate-interval 1 n) ))
+
+(define (sum l) (fold-left + 0 l))
+
+(define (sum-triples-eq n s)
+  (filter (lambda (t) (= (sum t) s))
+	  (unique-triples n) ))
+
+;;------------------------------------------------------------------------
+
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions) (safe? k positions))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoin-position new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.42
+;;  -------------
+
+(define (adjoin-position new-row k rest-of-queens)
+  (display rest-of-queens)(newline)
+  (map (lambda (partial-rows) (cons new-row partial-rows)) rest-of-queens) )
+  ;;(cons new-row rest-of-queens))
+
+(define empty-board '(()))
+
+(define (safe? k positions)
+  (display positions)(newline)
+  (if (null? (car positions))
+      #t
+      (not (find (lambda (x) (= x (caar positions))) (cadr positions)) )))
+
+
+(define (test1 k board-size queen-cols)
+  (flatmap
+   (lambda (rest-of-queens)
+     (map (lambda (new-row)
+	    (adjoin-position new-row k rest-of-queens))
+	  (enumerate-interval 1 board-size)))
+   queen-cols ))
+  
 
