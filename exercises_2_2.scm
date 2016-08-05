@@ -1,4 +1,6 @@
-(define nil '())
+#lang sicp
+
+;; (define nil '())
 
 ;;------------------------------------------------------------------------
 ;;  Exercise 2.17
@@ -464,25 +466,54 @@
 ;;  -------------
 
 (define (adjoin-position new-row k rest-of-queens)
-  (display rest-of-queens)(newline)
-  (map (lambda (partial-rows) (cons new-row partial-rows)) rest-of-queens) )
-  ;;(cons new-row rest-of-queens))
+  (cons new-row rest-of-queens))
 
-(define empty-board '(()))
+(define empty-board '())
+
+(define (diagonal-safe? dir x rest)
+  (if (null? rest)
+      #t
+      (let ((next (dir x 1)))
+	(if (= next (car rest))
+	    #f
+	    (diagonal-safe? dir next (cdr rest)) ))))
 
 (define (safe? k positions)
-  (display positions)(newline)
-  (if (null? (car positions))
+  (if (null? positions)
       #t
-      (not (find (lambda (x) (= x (caar positions))) (cadr positions)) )))
+      (and
+       (not (find (lambda (x) (= x (car positions))) (cdr positions)))
+       (diagonal-safe? - (car positions) (cdr positions))
+       (diagonal-safe? + (car positions) (cdr positions)) )))
+
+;;------------------------------------------------------------------------
+;;  Exercise 2.43
+;;  -------------
+
+;; (define (queens board-size)
+;;   (define (queen-cols k)
+;;     (if (= k 0)
+;;         (list empty-board)
+;;         (filter
+;;          (lambda (positions) (safe? k positions))
+;; 	 (flatmap
+;; 	  (lambda (new-row)
+;; 	    (map (lambda (rest-of-queens)
+;; 		   (adjoin-position new-row k rest-of-queens))
+;; 		 (queen-cols (- k 1))))
+;; 	  (enumerate-interval 1 board-size)) )))
+;;   (queen-cols board-size))
+	 
 
 
-(define (test1 k board-size queen-cols)
-  (flatmap
-   (lambda (rest-of-queens)
-     (map (lambda (new-row)
-	    (adjoin-position new-row k rest-of-queens))
-	  (enumerate-interval 1 board-size)))
-   queen-cols ))
-  
+
+
+
+
+
+
+
+
+
+
 
