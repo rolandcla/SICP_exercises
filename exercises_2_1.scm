@@ -1,3 +1,5 @@
+#lang sicp
+
 (define (gcd x y)
   (let ( (r (remainder x y)))
     (if (= r 0)

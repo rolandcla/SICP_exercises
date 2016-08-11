@@ -105,7 +105,7 @@
 ;     segment-list)))
 
 ;;-----------------------------------------------------------------------
-;; Exercise 2.47
+;; Exercise 2.49
 ;; -------------
 
 (define ONE 0.99)
@@ -126,3 +126,19 @@
                            (make-segment (make-vect ONE HALF)  (make-vect HALF ONE))
                            (make-segment (make-vect HALF ONE)  (make-vect ZERO HALF))
                            (make-segment (make-vect ZERO HALF) (make-vect HALF ZERO)) )))
+
+;;-----------------------------------------------------------------------
+;; Exercise 2.49
+;; -------------
+
+(define (flip-vert painter)
+  (transform-painter painter
+                     (make-vect 0.0 1.0)   ; new origin
+                     (make-vect 1.0 1.0)   ; new end of edge1
+                     (make-vect 0.0 0.0))) ; new end of edge2
+
+(define (flip-horiz painter)
+  (transform-painter painter
+                     (make-vect 1.0 0.0)
+                     (make-vect 0.0 0.0)
+                     (make-vect 1.0 1.0) ))
