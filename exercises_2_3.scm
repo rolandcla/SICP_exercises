@@ -155,6 +155,11 @@
 ;; Exercise 2.58
 ;; -------------
 
+(define (simplify exp )
+  (if (null? (cdr exp))
+      (car exp)
+      exp ))
+
 ;; Addition
 (define (make-sum a1 a2)
   (cond ((=number? a1 0)                 a2)
@@ -163,13 +168,14 @@
         (else                            (list a1 '+ a2)) ))
 
 (define (sum? x)
-  (and (pair? x) (eq? (cadr x) '+)))
+  (and (pair? x)
+       (pair? (cdr x))
+       (or (eq? (cadr x) '+)
+           (sum? (cddr x)) )))
 
-(define (addend s) (car s))
+(define (addend s) (simplify (takef s (lambda (x) (not (eq? x '+))))))
 
-(define (augend s)
-  (cond ((null? (cdddr s)) (caddr s))
-        (else             (cddr s)) ))
+(define (augend s) (simplify (cdr (dropf s (lambda (x) (not (eq? x '+)))))))
 
 ;; Multiplication
 (define (make-product m1 m2)
@@ -180,13 +186,14 @@
         (else                                 (list m1 '* m2)) ))
 
 (define (product? x)
-  (and (pair? x) (eq? (cadr x) '*)))
+  (and (pair? x)
+       (pair? (cdr x))
+       (or (eq? (cadr x) '*)
+           (sum? (cddr x)) )))
 
-(define (multiplier p) (car p))
+(define (multiplier p) (simplify (takef p (lambda (x) (not (eq? x '*))))))
 
-(define (multiplicand p) 
-  (cond ((null? (cdddr p)) (caddr p))
-        (else             (cddr p)) ))
+(define (multiplicand p) (simplify (cdr (dropf p (lambda (x) (not (eq? x '*)))))))
 
 ;; Exponentiation
 (define (make-exponentiation b e)
@@ -197,7 +204,9 @@
         (else                            (list  b '** e)) ))
 
 (define (exponentiation? x)
-  (and (pair? x) (eq? (cadr x) '**)) )
+  (and (pair? x)
+       (pair? (cdr x))
+       (eq? (cadr x) '**)) )
 
 (define (base x) (car x))
 
