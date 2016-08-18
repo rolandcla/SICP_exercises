@@ -543,8 +543,20 @@
 
 ;; fixed-length encoding needs 3bits  x (length song) -> 108 bits
 
+;;-----------------------------------------------------------------------------
+;; Exercise 2.71
+;; -------------
 
+(define symbols-5 '((a 1) (b 2) (c 4) (d 8) (e 16)))
+(define symbols-10 '((a 1) (b 2) (c 4) (d 8) (e 16) (f 32) (g 64) (h 128) (i 256) (j 512)))
 
+(define trees-5 (generate-huffman-tree symbols-5))
+(define trees-10 (generate-huffman-tree symbols-10))
+
+;; 1 bit required for most frequent symbol
+;; (- n 1) bits required for least frequent symbol
+
+;;-----------------------------------------------------------------------------
 
 
 
